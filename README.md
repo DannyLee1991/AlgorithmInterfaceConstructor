@@ -13,7 +13,6 @@ pip3 install aic
 在算法所在的根目录下编写配置文件`manifest.yaml`,配置文件示例如下：
 
 ```
-# - 入口包名/方法/参数
 app:
   # 应用名称
   name: demo
