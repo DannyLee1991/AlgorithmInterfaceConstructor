@@ -69,9 +69,10 @@ def parse_manifest(manifest):
             with open(os.sep.join(str(pkg).split('.')) + ".py", 'r') as f:
                 ast_tree = ast.parse(f.read())
                 for func in ast_tree.body:
-                    if func.name == func_name:
-                        arg_names = [arg.arg for arg in func.args.args]
-                        rpc_items.append((pkg, func.name, arg_names, note))
+                    if isinstance(func, ast.FunctionDef):
+                        if func.name == func_name:
+                            arg_names = [arg.arg for arg in func.args.args]
+                            rpc_items.append((pkg, func.name, arg_names, note))
         return app, rpc_items
 
 
@@ -100,8 +101,9 @@ def create_rpc(app, rpc_items):
             write_line_func(level=0,
                             code="from {pkg} import {func} as {_func}".format(pkg=str(rpc_item[0]),
                                                                               func=str(rpc_item[1]),
-                                                                              _func="_" + str(rpc_item[1])))
-        f.write(os.linesep * 3)
+                                                                              _func="_" + str(
+                                                                                  rpc_item[1])) + os.linesep)
+        f.write(os.linesep * 2)
 
         for rpc_item in rpc_items:
             func_name = rpc_item[1]
@@ -118,7 +120,10 @@ def create_rpc(app, rpc_items):
                 write_line_func(level=1, code=note + os.linesep)
                 write_line_func(level=1, code="\"\"\"" + os.linesep)
             write_line_func(level=1,
-                            code="return {func_name}({args})".format(func_name=_func_name, args=", ".join(arg_names)))
+                            code="return {func_name}({args})".format(func_name=_func_name,
+                                                                     args=", ".join(arg_names)) + os.linesep)
+
+            f.write(os.linesep * 2)
 
 
 def create_docker(app):

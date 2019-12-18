@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='aic',
-    version='0.1',
+    version='0.2',
     author="Dannylee",
     author_email="747554505@qq.com",
     license="MIT",
